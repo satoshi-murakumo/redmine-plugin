@@ -35,9 +35,10 @@ public class RedmineRepositoryBrowser extends SubversionRepositoryBrowser {
         URL baseUrl = getRedmineURL(path.getLogEntry());
         String projectName = getProject(path.getLogEntry());
         String filePath = getFilePath(path.getLogEntry(), path.getValue());
-
         int revision = path.getLogEntry().getRevision();
-        return new URL(baseUrl, "repositories/diff/" + projectName + filePath + "?rev=" + revision);
+
+        URL diffUrl = new URL(baseUrl, "projects/" + projectName + "/repository/revisions/" + revision + "/diff" + filePath);
+        return diffUrl;
     }
 
     @Override
@@ -45,15 +46,24 @@ public class RedmineRepositoryBrowser extends SubversionRepositoryBrowser {
         URL baseUrl = getRedmineURL(path.getLogEntry());
         String projectName = getProject(path.getLogEntry());
         String filePath = getFilePath(path.getLogEntry(), path.getValue());
+        int revision = path.getLogEntry().getRevision();
 
-        return baseUrl == null ? null : new URL(baseUrl, "repositories/entry/" + projectName + filePath);
+        URL fileUrl = baseUrl == null
+                        ? null
+                        : new URL(baseUrl, "projects/" + projectName + "/repository/revisions/" + revision + "/entry" + filePath);
+        return fileUrl;
     }
 
     @Override
     public URL getChangeSetLink(LogEntry changeSet) throws IOException {
         URL baseUrl = getRedmineURL(changeSet);
         String projectName = getProject(changeSet);
-        return baseUrl == null ? null : new URL(baseUrl, "repositories/revision/" + projectName + "/" + changeSet.getRevision());
+        int revision = changeSet.getRevision();
+
+        URL chengeSetUrl = baseUrl == null
+                            ? null
+                            : new URL(baseUrl, "projects/" + projectName + "/repository/revisions/" + revision);
+        return chengeSetUrl;
     }
 
     @Override
